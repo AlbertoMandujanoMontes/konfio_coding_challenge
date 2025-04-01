@@ -61,10 +61,22 @@ services:
   airflow-init:
     <<: *airflow-common
     container_name: airflow-init
-    command: bash -c "airflow db migrate && airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com"
-    depends_on:
-      - postgres
-      - redis
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./include:/opt/airflow/include
+      - ./airflow_settings.yaml:/opt/airflow/airflow_settings.yaml
+    command: >
+      bash -c "
+        echo '🔧 Running Airflow DB migration...' && \
+        airflow db migrate && \
+        echo '✅ Creating default admin user...' && \
+        airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com \
+        echo '📦 Importing Airflow settings from YAML...' && \
+        python /opt/airflow/include/airflow_setup.py
+      "
+  
 
   mysql:
     image: mysql:8.0
