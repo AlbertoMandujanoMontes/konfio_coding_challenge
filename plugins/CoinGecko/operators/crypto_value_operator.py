@@ -3,8 +3,18 @@ from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 from airflow.models import Variable
 import requests
-
 from datetime import datetime
+from airflow.providers.mysql.hooks.mysql import MySqlHook
+from include.src.airflow.jinga2 import get_search_path, render_template
+
+def store_crypto_data(data):
+    mysql_hook = MySqlHook(mysql_conn_id='mysql_write')
+    sql_insert = render_template("crypto_data/insert_crypto_data.sql",
+                                 base = data)
+    mysql_hook.run(sql_insert, autocommit=False)
+
+    return 0
+
 def get_crypto_data(date, coin_id):
     headers = {
         "accept": "application/json",
@@ -15,9 +25,9 @@ def get_crypto_data(date, coin_id):
 
     url = f"https://api.coingecko.com/api/v3/coins/{coin_id}/history"
     params = {'date': formatted_date}
-    result = {'id':None, 'name':None, 'symbol': None, 'price':None}
+    result = {'id':None, 'name':None, 'symbol': None, 'price':None, 'date' : date}
     try:
-        response = requests.get(url, params=params)
+        response = requests.get(url, params=params, headers= headers)
         if response.status_code == 200:
             data = response.json()
             result['name'] = data['name']
@@ -60,7 +70,8 @@ class CryptoValueOperator(BaseOperator):
         :return: http response
         """
         ds = context['ds']
-        print(f"el ds es {ds}")
+        crypto_data = []
         for coin_id in self.coins_id:
-            data = get_crypto_data(ds,coin_id)
-            print(f"the data es {data}")
+            current_coin_data = get_crypto_data(ds,coin_id)
+            crypto_data.append(current_coin_data)
+        store_crypto_data(crypto_data)
