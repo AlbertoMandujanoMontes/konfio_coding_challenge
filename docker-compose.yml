@@ -94,13 +94,19 @@ services:
   jupyter:
     image: jupyter/scipy-notebook:python-3.11
     container_name: jupyter-notebook
+    user: root
     ports:
       - "8888:8888"
     volumes:
       - ./notebooks:/home/jovyan/work
     environment:
       - JUPYTER_ENABLE_LAB=yes
-    command: start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''
+    command: >
+      bash -c "
+        apt-get update && \
+        apt-get install -y openjdk-11-jdk && \
+        start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''
+      "
 
   spark:
     image: bitnami/spark:3.5.0
