@@ -1,0 +1,32 @@
+# This feature is in Beta.
+# Important Note: Connections, Variables, and Pools defined through this process will
+#  only be available locally. To ensure they are available in your deployments on
+#  Astronomer Cloud or Enterprise, please add them via the Airflow UI.
+
+# Please report any bugs to support@astronomer.io
+
+# NOTE: If putting a dict in conn_extra, please wrap in single quotes.
+
+# More details you can find https://github.com/astronomer/docs/blob/master/v0.10/cli-airflow-configuration.md
+
+airflow:
+    connections:
+        - conn_id: 'mysql_read'
+          conn_type: 'mysql'
+          conn_host: 'mysql'
+          conn_schema: 'konfio_coding_challenge'
+          conn_login: 'no-prod_login'
+          conn_password: 'no-prod-password'
+          conn_port: '3306'
+          conn_extra: '{"charset": "utf8","cursor":"SSCursor"}'
+        - conn_id: 'mysql_write'
+          conn_type: 'mysql'
+          conn_host: 'mysql'
+          conn_schema: 'konfio_coding_challenge'
+          conn_login: 'no-prod-login'
+          conn_password: 'no-prod-password'
+          conn_port: '3306'
+          conn_extra: '{"charset": "utf8","cursor":"SSCursor"}'
+    variables:
+        - variable_name: coin_gecko_api_key_secret
+          variable_value: 'no_prod_token'
