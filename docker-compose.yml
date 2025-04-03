@@ -99,12 +99,14 @@ services:
       - "8888:8888"
     volumes:
       - ./notebooks:/home/jovyan/work
+      - ./analysis_requirements.txt:/tmp/analysis_requirements.txt
     environment:
       - JUPYTER_ENABLE_LAB=yes
     command: >
       bash -c "
         apt-get update && \
         apt-get install -y openjdk-11-jdk && \
+        pip install -r /tmp/analysis_requirements.txt && \
         start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''
       "
 
