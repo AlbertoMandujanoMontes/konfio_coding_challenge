@@ -84,8 +84,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: konfio_coding_challenge
-      MYSQL_USER: testuser
-      MYSQL_PASSWORD: testpass
+      MYSQL_USER: dev_user
+      MYSQL_PASSWORD: dev_pass
     ports:
       - "3306:3306"
     volumes:
@@ -117,9 +117,6 @@ services:
       - "4040:4040"   # Spark UI
     volumes:
       - ./spark-apps:/opt/spark-apps
-
-
-
 
 volumes:
   postgres-db-volume:
