@@ -20,7 +20,10 @@ This project provides a complete data engineering and analysis environment using
 
 - The credentials required to access the Airflow UI and MySQL database are included in this repository **for convenience** to facilitate evaluation. However, credentials should always be handled with care and **must never be committed to a public repository** in real-world applications.
 
-- - The Spark implementation and analysis workflow are documented in the notebook [`notebooks/Analysis.ipynb`](notebooks/Analysis.ipynb).
+- The Spark implementation and analysis workflow are documented in the notebook [`notebooks/Analysis.ipynb`](notebooks/Analysis.ipynb).
+
+- On first run, the MySQL container uses the script [`mysql/init.sql`](mysql/init.sql) to automatically create the required `crypto_currency_value` table. This ensures the environment is ready to receive data without manual setup.
+
 ---
 
 
