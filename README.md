@@ -9,11 +9,17 @@ This project provides a complete data engineering and analysis environment using
 - **Docker Compose** for reproducibility
 
 ---
-## 📦 Considerations
-- The process to insert new registers in the database will not insert the data if there is already a register with the same same crypto_id and date. This is because the process is intended to run once the day is over and we have the close value of the crypto. 
-- The process can be adapted to get the value of more cryptocurrencies its just a matter of adding the id into the list "coins_id". 
-- The CoinGecko only allows to get information of the last 6 months, the Airflow process uses it to get the up to date data, but for the analysis of the data of the first quarter of 2022 the package yfinance was used.
-- The credentials necessary to to access the Airflow UI and the MySQL database are provided in this page for convinance sake to make the evaluation of the project easier. Credentials should be handled with extreme care and under any circumstance should be uploaded to a public repository. 
+## 💡 Considerations
+- The `docker-compose.yml` file includes all the containers required for both the data engineering and data analysis components. This design choice was made to keep the project **self-contained and easy to run**. However, in a real-world application, it would be best practice to **separate these components into distinct environments** to align with deployment, scaling, and security requirements.
+
+- The process that inserts new records into the database will **skip any entry that already exists** for the same `crypto_id` and `date`. This behavior is intentional, as the process is designed to run once per day—after the market closes—to store the final value for each cryptocurrency.
+
+- The pipeline is easily adaptable to track additional cryptocurrencies. To do so, simply add the desired CoinGecko IDs to the `coins_id` list.
+
+- CoinGecko's API provides data for up to the **last 6 months only**. While the Airflow DAG fetches the most recent data via CoinGecko, **historical data for Q1 2022 was obtained using the `yfinance` package** for analysis purposes.
+
+- The credentials required to access the Airflow UI and MySQL database are included in this repository **for convenience** to facilitate evaluation. However, credentials should always be handled with care and **must never be committed to a public repository** in real-world applications.
+
 ---
 
 
@@ -39,7 +45,7 @@ This project provides a complete data engineering and analysis environment using
 ### 1. Clone the project
 
 ```bash
-git clone https://github.com/your-org/konfio-coding-challenge.git
+git clone https://github.com/AlbertoMandujanoMontes/konfio_coding_challenge.git
 cd konfio-coding-challenge
 ```
 
@@ -52,7 +58,7 @@ docker-compose up --build
 This will spin up:
 - Airflow (webserver, scheduler, worker)
 - MySQL
-- Jupyter Notebook (http://localhost:8888)
+- Jupyter Notebook 
 - Redis
 - PostgreSQL (for Airflow metadata)
 
@@ -95,9 +101,3 @@ To remove all containers and volumes:
 ```bash
 docker-compose down -v
 ```
-
----
-
-## 📬 Questions?
-
-Open an issue or reach out to the team!
