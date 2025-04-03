@@ -49,7 +49,7 @@ def get_crypto_data(date, coin_id):
 
 
 class CryptoValueOperator(BaseOperator):
-    """Update attributes in Intercom"""
+    """Get and insert cryptocurrencies prices"""
     template_fields = []
     template_ext = ('.sql',)
     ui_color = '#ededed'
