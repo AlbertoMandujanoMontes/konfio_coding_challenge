@@ -6,13 +6,17 @@ import requests
 from datetime import datetime
 from airflow.providers.mysql.hooks.mysql import MySqlHook
 from include.src.airflow.jinga2 import get_search_path, render_template
+import logging
+
+log = logging.getLogger(__name__)
 
 def store_crypto_data(data):
+    log.info(f"Inserting data into the database")
     mysql_hook = MySqlHook(mysql_conn_id='mysql_write')
     sql_insert = render_template("crypto_data/insert_crypto_data.sql",
                                  base = data)
     mysql_hook.run(sql_insert, autocommit=False)
-
+    log.info(f"Data loaded in the database")
     return 0
 
 def get_crypto_data(date, coin_id):
@@ -27,6 +31,7 @@ def get_crypto_data(date, coin_id):
     params = {'date': formatted_date}
     result = {'id':None, 'name':None, 'symbol': None, 'price':None, 'date' : date}
     try:
+        log.info(f"Attemping to get data for {coin_id} date: {date}")
         response = requests.get(url, params=params, headers= headers)
         if response.status_code == 200:
             data = response.json()
@@ -35,11 +40,11 @@ def get_crypto_data(date, coin_id):
             result['id'] = data['id']
             result['price']  = data['market_data']['current_price']['usd']
         else:
-            print(f"Failed to fetch data for {formatted_date}")
-            print(f"Error {response.json()}")
+            log.error(f"Failed to fetch data for {formatted_date} due response error")
+            log.info(f"Error {response.json()}")
 
     except Exception as e:
-        print(f"Error on {formatted_date}: {e}")
+        log.error(f"Error on {formatted_date}: {e}")
     return result
 
 
