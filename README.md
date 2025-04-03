@@ -24,6 +24,15 @@ This project provides a complete data engineering and analysis environment using
 
 - On first run, the MySQL container uses the script [`mysql/init.sql`](mysql/init.sql) to automatically create the required `crypto_currency_value` table. This ensures the environment is ready to receive data without manual setup.
 
+- The current architecture is not designed for real-time integration. While the scheduling interval in Airflow can be reduced, it is not recommended to go below an **hourly frequency** due to resource constraints and reliability concerns. 
+
+  To support real-time processing, the infrastructure would need to evolve. A potential approach could be:
+
+  1. Integrate a data source that supports **streaming**.
+  2. Replace the Airflow scheduler with a **streaming pipeline** using **Spark Structured Streaming** and **Kafka**.
+  3. Store processed data in a real-time analytics database such as **Apache Druid**.
+  4. Use **Apache Superset** for visualization and dashboarding, leveraging its native Druid integration.
+
 ---
 
 
